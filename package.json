@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "demo": "./bin/demo.js"
+    "make:page": "./bin/make.js page"
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
+    "mkdirp": "^0.5.1",
     "yargs": "^8.0.1"
   }
 }
