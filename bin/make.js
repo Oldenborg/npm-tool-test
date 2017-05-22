@@ -3,6 +3,10 @@
 const fs     = require('fs');
 const mkdirp = require('mkdirp');
 
+String.prototype.toUnderscore = function(){
+    var string = this.replace(/(?:^|)([A-Z])/g, function (x,y){return "_" + y.toLowerCase()}).replace(/^_/, "").replace('._', '.');
+    return string;
+};
 
 require('yargs')
     .usage('$0 <cmd> [args]')
@@ -43,28 +47,50 @@ require('yargs')
       console.log('File name:', name);
       console.log('Pages:', pages);
       createFile('./bin/','router.js');
-      var path = name.toLowerCase().replace(/\./g,'/');
 
       for(var i = 0, len = pages.length; i < len; i++) {
         var page = pages[i];
 
-            createPugTemplate(path,page);
-            createJsViewPageExtension(path,page);
+            createPugTemplate(name,page);
+            createJsViewPageExtension(name,page);
       }
     })
     .help()
     .argv
 
+function getTemplateId(name,page) {
 
-function createPugTemplate(path,page) {
+    var name = name.toUnderscore().replace(/\./g,'_');
+    return name + '_' + page;
+}
 
+function getPath(name) {
+ return name.toUnderscore().replace(/\./g,'/');
+}
+
+function createPugTemplate(name,page) {
+
+    var path = getPath(name);
     var file = getFileName(page,'pug');
+    var template_id = getTemplateId(name,page);
+    var fullpath = './app/pug/' + path + '/' + file;
 
-    createFile('./bin/pug/' + path, file, function () {
+var template = `script(type="text/template", id="${template_id}")
+  .row
+    .col-xs-12
+      .box.box--white
+        .box__controls
+          a.btn.btn-sm(href="/#production/interfaces/new/") Create
+ 
+        .box__body
+          h3 Production - Interfaces index page
+          a(href="/#production/interfaces/new/") Link to create page
+          br
+          a(href="/#production/interfaces/1/") Link to edit page
+`;
 
-        var fullpath = './bin/pug/' + path + '/' + file;
-
-        fs.writeFile(fullpath, "Hey there!", function(err) {
+    createFile('./app/pug/' + path, file, function () {
+        fs.writeFile(fullpath, template, function(err) {
             if(err) {
                 return console.log(err);
             }
@@ -120,11 +146,4 @@ function createFile(path, file,callback) {
 
 function getFileName(file,ext) {
     return file + '.' + ext;
-}
-
-function getFullPath(path,file) {
-    var path = './bin/' + path;
-    if(file != undefined)
-        path += '/' + file;
-    return path;
 }
