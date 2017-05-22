@@ -95,6 +95,32 @@ var template = `script(type="text/template", id="${template_id}")
     writeTemplate(basepath,file,template);
 }
 
+function createJsIndex(name,page) {
+
+    var path = getPath(name);
+    var file = getFileName(page,'js');
+    var basepath = './app/js/' + path;
+    var template_id = getTemplateId(name,page);
+
+var template = `App.Views.${name} = App.Views.${name} || [];                                                        
+App.Views.${name}.${page} = App.Views.Concepts.table.extend({                                    
+
+  cp_name: 'App.Views.${name}.${page}',
+  cp_template: '#${template_id}',
+  
+  addOne: function(model){                                                                                        
+    this.table.row.add( [
+      '<a class="js__click" href="/${path}/' + model.id + '/">' + model.attributes.name + '</a>',          
+      model.attributes.note,
+    ] ).draw( false );
+    return this;
+  } 
+    
+});
+`;
+    writeTemplate(basepath,file,template);
+}
+
 function createPugEdit(name,page) {
 
     var path = getPath(name);
