@@ -10,7 +10,10 @@ String.prototype.toUnderscore = function(){
 
 require('yargs')
     .usage('$0 <cmd> [args]')
-    .command('page [name] [pages]', '--name "File.Name" --pages "index,new,edit"', {
+    .command('page [type] [name] [pages]', '--type "Client" --name "Accounts" --pages "index,new,edit"', {
+      type: {
+        default: null
+      },
       name: {
         default: null
       },
@@ -21,10 +24,18 @@ require('yargs')
 
       var error = false;
 
+      if(argv.type== null) {
+        console.log('ERROR:')
+        console.log('You must provide a type');
+        console.log('npm run make:page --type "Client"');
+        console.log('');
+        error = true;
+      }
+
       if(argv.name == null) {
         console.log('ERROR:')
         console.log('You must provide a name');
-        console.log('npm run new-page --name "File.Name"');
+        console.log('npm run make:page --name "File.Name"');
         console.log('');
         error = true;
          
@@ -33,7 +44,7 @@ require('yargs')
       if(argv.pages == null) {
         console.log('ERROR:')
         console.log('You must provide a comma seperated list of pages');
-        console.log('npm run new-page --pages "index,new,edit"');
+        console.log('npm run make:page --pages "index,new,edit"');
         console.log('');
         error = true;
       }
@@ -41,7 +52,8 @@ require('yargs')
       if(error == true)
         return;
 
-      var name = argv.name;
+      var type = argv.type;
+      var name = type + '.' + argv.name;
       var pages = argv.pages.split(',');
 
       console.log('File name:', name);
