@@ -56,11 +56,11 @@ require('yargs')
                 // createRoutesIndex(name,page);
             } else if (page == 'edit') {
                 createPugEdit(name,page);
-                // createJsEdit(name,page);
+                createJsEdit(name,page);
                 // createRoutesEdit(name,page);
             } else if (page == 'new') {
                 createPugNew(name,page);
-                // createJsNew(name,page);
+                createJsNew(name,page);
                 // createRoutesNew(name,page);
             } else {
                 throw new Error('Unknown page type, you must define what should happen when creating a page with the type: ' + page);
@@ -155,6 +155,29 @@ var template = `script(type="text/template", id="${template_id}")
     writeTemplate(basepath,file,template);
 }
 
+function createJsEdit(name,page) {
+
+    var path = getPath(name);
+    var file = getFileName(page,'js');
+    var basepath = './app/js/' + path;
+    var template_id = getTemplateId(name,page);
+
+var template = `App.Views.${name} = App.Views.${name} || [];                                                        
+App.Views.${name}.${page} = App.Views.Concepts.form.extend({                                    
+
+  cp_name: 'App.Views.${name}.${page}',
+  cp_template: '#${template_id}',
+
+  bindings: {
+    '.bi__${template_id}_name': 'name',
+    '.bi__${template_id}_note': 'note'
+  }
+    
+});
+`;
+    writeTemplate(basepath,file,template);
+}
+
 function createPugNew(name,page) {
 
     var path = getPath(name);
@@ -196,6 +219,29 @@ var template = `script(type="text/template", id="${template_id}")
                                                                                    
 `;
 
+    writeTemplate(basepath,file,template);
+}
+
+function createJsNew(name,page) {
+
+    var path = getPath(name);
+    var file = getFileName(page,'js');
+    var basepath = './app/js/' + path;
+    var template_id = getTemplateId(name,page);
+
+var template = `App.Views.${name} = App.Views.${name} || [];                                                        
+App.Views.${name}.${page} = App.Views.Concepts.form.extend({                                    
+
+  cp_name: 'App.Views.${name}.${page}',
+  cp_template: '#${template_id}',
+
+  bindings: {
+    '.bi__${template_id}_name': 'name',
+    '.bi__${template_id}_note': 'note'
+  }
+    
+});
+`;
     writeTemplate(basepath,file,template);
 }
 
