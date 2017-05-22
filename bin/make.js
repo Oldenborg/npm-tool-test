@@ -47,25 +47,62 @@ require('yargs')
       console.log('File name:', name);
       console.log('Pages:', pages);
 
+      // Generate templates
       for(var i = 0, len = pages.length; i < len; i++) {
         var page = pages[i];
 
             if (page == 'index') {
                 createPugIndex(name,page);
                 createJsIndex(name,page);
-                // createRoutesIndex(name,page);
             } else if (page == 'edit') {
                 createPugEdit(name,page);
                 createJsEdit(name,page);
-                // createRoutesEdit(name,page);
             } else if (page == 'new') {
                 createPugNew(name,page);
                 createJsNew(name,page);
-                // createRoutesNew(name,page);
             } else {
                 throw new Error('Unknown page type, you must define what should happen when creating a page with the type: ' + page);
             }
       }
+
+
+      // Output routes
+      console.log('  protected_routes: {');
+      for(var i = 0, len = pages.length; i < len; i++) {
+        var page = pages[i];
+
+            if (page == 'index') {
+              outputIndexRoute(name,page);
+            }
+
+            if (page == 'new') {
+              outputNewRoute(name,page);
+            }
+            
+            if (page == 'edit') {
+              outputEditRoute(name,page);
+            }
+            
+      }
+      console.log('  }');
+
+      // Output route templates
+      for(var i = 0, len = pages.length; i < len; i++) {
+        var page = pages[i];
+            if (page == 'index') {
+              outputIndexRouteFunction(name,page);
+            }
+            
+            if (page == 'edit') {
+              outputEditRouteFunction(name,page);
+            }
+            
+            if (page == 'new') {
+              outputNewRouteFunction(name,page);
+            }
+
+      }
+
     })
     .help()
     .argv
@@ -76,6 +113,7 @@ function createPugIndex(name,page) {
     var file = getFileName(page,'pug');
     var basepath = './app/pug/' + path;
     var template_id = getTemplateId(name,page);
+
 
 var template = `script(type="text/template", id="${template_id}")
   .row
@@ -95,27 +133,85 @@ var template = `script(type="text/template", id="${template_id}")
     writeTemplate(basepath,file,template);
 }
 
+function outputIndexRoute(name,page) {
+
+    var path = getPath(name);
+    var template_id = getTemplateId(name,page);
+
+    console.log('    ','"' + path + '/":','           ', '"' + template_id + '",');
+}
+
+function outputIndexRouteFunction(name,page) {
+    var path = getPath(name);
+    var template_id = getTemplateId(name,page);
+
+    console.log('  ' + template_id + ': function () {');
+    console.log('    //this.loadView(new App.Views.' + name + '.' + page + '({');
+    console.log('    //  collection: new App.Collections.' + name + "()");
+    console.log('    //});')
+    console.log('  },');
+}
+
+function outputNewRoute(name,page) {
+
+    var path = getPath(name);
+    var template_id = getTemplateId(name,page);
+
+    console.log('    ','"' + path + '/new/":','       ', '"' + template_id + '",');
+}
+
+function outputNewRouteFunction(name,page) {
+    var path = getPath(name);
+    var template_id = getTemplateId(name,page);
+
+    console.log('  ' + template_id + ': function () {');
+    console.log('    //this.loadView(new App.Views.' + name + '.' + page + '({');
+    console.log('    //  model: new App.Models.' + name + "({id:'new'})");
+    console.log('    //});')
+    console.log('  },');
+}
+
+function outputEditRoute(name,page) {
+
+    var path = getPath(name);
+    var template_id = getTemplateId(name,page);
+
+    console.log('    ','"' + path + '/:id/":','       ', '"' + template_id + '",');
+}
+
+function outputEditRouteFunction(name,page) {
+    var path = getPath(name);
+    var template_id = getTemplateId(name,page);
+
+    console.log('  ' + template_id + ': function (id) {');
+    console.log('    //this.loadView(new App.Views.' + name + '.' + page + '({');
+    console.log('    //  model: new App.Models.' + name + '({id:id})');
+    console.log('    //});')
+    console.log('  },');
+}
+
+
 function createJsIndex(name,page) {
 
     var path = getPath(name);
     var file = getFileName(page,'js');
-    var basepath = './app/js/' + path;
+    var basepath = './app/js/views/' + path;
     var template_id = getTemplateId(name,page);
 
-var template = `App.Views.${name} = App.Views.${name} || [];                                                        
-App.Views.${name}.${page} = App.Views.Concepts.table.extend({                                    
+var template = `App.Views.${name} = App.Views.${name} || [];
+App.Views.${name}.${page} = App.Views.Concepts.table.extend({
 
   cp_name: 'App.Views.${name}.${page}',
   cp_template: '#${template_id}',
   
-  addOne: function(model){                                                                                        
+  addOne: function(model){
     this.table.row.add( [
-      '<a class="js__click" href="/${path}/' + model.id + '/">' + model.attributes.name + '</a>',          
+      '<a class="js__click" href="/${path}/' + model.id + '/">' + model.attributes.name + '</a>',
       model.attributes.note,
     ] ).draw( false );
     return this;
   } 
-    
+
 });
 `;
     writeTemplate(basepath,file,template);
@@ -159,11 +255,11 @@ function createJsEdit(name,page) {
 
     var path = getPath(name);
     var file = getFileName(page,'js');
-    var basepath = './app/js/' + path;
+    var basepath = './app/js/views/' + path;
     var template_id = getTemplateId(name,page);
 
-var template = `App.Views.${name} = App.Views.${name} || [];                                                        
-App.Views.${name}.${page} = App.Views.Concepts.form.extend({                                    
+var template = `App.Views.${name} = App.Views.${name} || [];
+App.Views.${name}.${page} = App.Views.Concepts.form.extend({
 
   cp_name: 'App.Views.${name}.${page}',
   cp_template: '#${template_id}',
@@ -172,7 +268,7 @@ App.Views.${name}.${page} = App.Views.Concepts.form.extend({
     '.bi__${template_id}_name': 'name',
     '.bi__${template_id}_note': 'note'
   }
-    
+
 });
 `;
     writeTemplate(basepath,file,template);
@@ -216,7 +312,6 @@ var template = `script(type="text/template", id="${template_id}")
             .col-lg-12
               h3 ${name} - ${page} help
               p Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultric    ies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
-                                                                                   
 `;
 
     writeTemplate(basepath,file,template);
@@ -226,11 +321,11 @@ function createJsNew(name,page) {
 
     var path = getPath(name);
     var file = getFileName(page,'js');
-    var basepath = './app/js/' + path;
+    var basepath = './app/js/views/' + path;
     var template_id = getTemplateId(name,page);
 
-var template = `App.Views.${name} = App.Views.${name} || [];                                                        
-App.Views.${name}.${page} = App.Views.Concepts.form.extend({                                    
+var template = `App.Views.${name} = App.Views.${name} || [];
+App.Views.${name}.${page} = App.Views.Concepts.form.extend({
 
   cp_name: 'App.Views.${name}.${page}',
   cp_template: '#${template_id}',
@@ -239,7 +334,7 @@ App.Views.${name}.${page} = App.Views.Concepts.form.extend({
     '.bi__${template_id}_name': 'name',
     '.bi__${template_id}_note': 'note'
   }
-    
+
 });
 `;
     writeTemplate(basepath,file,template);
