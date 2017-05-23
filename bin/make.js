@@ -177,7 +177,7 @@ function outputIndexRouteFunction(data) {
     console.log('  ' + data.id + ': function () {');
     console.log('    //this.loadView(new App.Views.' + data.class + '.' + data.page + '({');
     console.log('    //  collection: new App.Collections.' + data.collection + "()");
-    console.log('    //});')
+    console.log('    //}));');
     console.log('  },');
 }
 
@@ -193,7 +193,7 @@ function outputNewRouteFunction(data) {
     console.log('  ' + data.id + ': function () {');
     console.log('    //this.loadView(new App.Views.' + data.class + '.' + data.page + '({');
     console.log('    //  model: new App.Models.' + data.model + "({id:'new'})");
-    console.log('    //});')
+    console.log('    //}));');
     console.log('  },');
 }
 
@@ -209,7 +209,7 @@ function outputEditRouteFunction(data) {
     console.log('  ' + data.id + ': function (id) {');
     console.log('    //this.loadView(new App.Views.' + data.class + '.' + data.page + '({');
     console.log('    //  model: new App.Models.' + data.model + '({id:id})');
-    console.log('    //});')
+    console.log('    //}));');
     console.log('  },');
 }
 
