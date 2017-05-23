@@ -1,11 +1,11 @@
 ### NPM Tool - Make
 To use the page generator tool you mus use the command `npm run make:page` this command takes 3 arguments
 
-- type: Should be Client, Production or Bluecloud
-- name: Name of the pages you are about to create 'Productions, Orders, Users, etc' often this is a plural version of a noun.
-- pages: A commaseperated list of the types of pages you wish to create "index,new,edit" etc.
+- type: Should be common, client, production or bluecloud
+- name: Name of the folder in wich the pages should be created, this will also be used to name the collection and model.. ie 'Productions, Orders, Users, etc' often this is a plural version of a noun.
+- pages: A comma seperated list of the types of pages you wish to create "index,new,edit" etc.
 
 Example:
 ```
-npm run make:page --type "Client" --name "Accounts" --pages "index,edit,new"
+npm run make:page --type "client" --name "accounts" --pages "index,edit,new"
 ```
